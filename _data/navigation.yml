@@ -1,0 +1,12 @@
+- title: Blog
+  url: /
+- title: About
+  url: /about
+- title: Projects
+  url: /projects
+  sublinks: 
+  - title: Things
+    url: /things
+    subfolderitems:
+      - title: Longboard Lights
+        url: /projects/longboard_lights

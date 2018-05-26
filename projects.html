@@ -1,0 +1,18 @@
+---
+layout: page
+title: Projects
+permalink: /projects/
+---
+
+{% assign items = site.data.navigation %}
+{% for item in items %}
+{% for entry in item.sublinks %}
+<h3>{{ entry.title }}</h3>
+<ul>
+{% for link in entry.subfolderitems %}
+<li><a href="{{ link.url }}">{{link.title}}</a></li>
+{% endfor %}
+</ul>
+
+{% endfor %}
+{% endfor %}
