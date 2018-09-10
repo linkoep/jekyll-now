@@ -10,3 +10,8 @@
     subfolderitems:
       - title: Longboard Lights
         url: /projects/longboard_lights
+      - title: Smart-Home Blinds
+        url: /projects/blinds
+- title: Resume
+  url: /resume/Linus_Koepfer_Resume.pdf
+
