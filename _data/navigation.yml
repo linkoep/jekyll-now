@@ -1,5 +1,3 @@
-- title: Blog
-  url: /blog
 - title: About
   url: /about
 - title: Projects
@@ -12,6 +10,8 @@
         url: /projects/longboard_lights
       - title: Smart-Home Blinds
         url: /projects/blinds
+- title: Blog
+  url: /blog
 - title: Resume
   url: /resume/Linus_Koepfer_Resume.pdf
 
