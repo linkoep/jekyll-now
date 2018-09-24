@@ -3,13 +3,20 @@
 - title: Projects
   url: /projects
   sublinks: 
-  - title: Things
-    url: /things
+  - title: Software
+    subfolderitems:
+      - title: '"DadBot" Twitter Bot'
+        url: /projects/dad-bot
+  - title: Systems
     subfolderitems:
       - title: Longboard Lights
-        url: /projects/longboard_lights
+        url: /projects/longboard-lights
       - title: Smart-Home Blinds
         url: /projects/blinds
+  - title: Hardware
+    subfolderitems:
+      - title: Frequency Detection (Part of RCOS)
+        url: /projects/frequency-detection
 - title: Blog
   url: /blog
 - title: Resume
