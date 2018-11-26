@@ -103,8 +103,8 @@ had personally contributed to some aspect of the Watson product we were using,
 even at 3am, was a wonderful experience, and it was a very well-organized and
 thoroughly enjoyable event.
 
-[^1]: I am writing this post in November because school has been super
-	busy, but for ease of perspective, I shall pretend it was immediately after.
+[^1]: I am writing this post in November because school is  super busy, but for
+	ease of perspective, I shall pretend it was immediately after.
 
 [^2]: Due to the nature of hackathons, this prezi screenshot is the best
 	overview image I have. Note the bottom right element was not implemented, but
