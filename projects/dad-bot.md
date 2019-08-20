@@ -2,6 +2,7 @@
 layout: page
 title: '"DadBot" Twitter Bot'
 ---
+{:toc}
 I've prototyped a simple twitter bot that uses the twitter API to reply to
 tweets containing the phrase "I'm {something}" with "Hi {something}! I'm Dad".
 Twitter doesn't like automated replies to random users, so I'm in the process
