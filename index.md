@@ -7,8 +7,8 @@ Hi there!
 Thanks for checking out my website! 
 
 My name is Linus Koepfer, and I'm
-a junior Computer Science/Computer Systems Engineering dual major at Rensselaer
-Polytechnic Institute. I love all sorts of engineering and programming, from
+a Computer Science/Computer Systems Engineering dual major at Rensselaer
+Polytechnic Institute graduating in Spring 2020. I love all sorts of engineering and programming, from
 IoT projects and microcontrollers to full stack web development and DevOps.
 
 Feel free to check out some of my [personal projects](/projects), or read about
