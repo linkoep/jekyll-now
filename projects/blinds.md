@@ -8,6 +8,9 @@ title: Smart-Home Blinds
    1. [Controlling the Motor](#controllingTheMotor)
    1. [Controlling the Relay](#controllingTheRelay)
    1. [Interfacing with the Blinds](#interfacingWithTheBlinds)
+1. [Software](#software)
+   1. [NodeMCU Firmware](#nodeMcuFirmware)
+   1. [SmartThings Device Handler](#smartThingsDeviceHandler)
 
 <a name="introduction"></a>
 ## Introduction 
@@ -132,3 +135,188 @@ prototype.
 	caption="The completed prototype" 
 %}
 
+<a name="software"></a>
+## Software 
+<a name="nodeMcuFirmware"></a>
+### NodeMCU Firmware
+The first order of business on the microcontroller side of things was to be
+able to control the motor via the relays. To do this, I had to activate one of
+the relays to turn the motor in that direction. The relay connects when a `LOW`
+signal is sent.
+```c++
+#define OPEN_PIN 16 //D0
+#define CLOSE_PIN 5 //D1
+#define ON_TIME 1000
+
+void setup(void){
+	pinMode(OPEN_PIN, OUTPUT);
+	pinMode(CLOSE_PIN, OUTPUT);
+	digitalWrite(OPEN_PIN, HIGH);
+	digitalWrite(CLOSE_PIN, HIGH);
+	//...
+}
+void open(void){
+	Serial.println("Opening");
+	digitalWrite(OPEN_PIN, LOW);
+	delay(ON_TIME);
+	digitalWrite(OPEN_PIN, HIGH);
+}
+
+void close(void){
+	Serial.println("Closing");
+	digitalWrite(CLOSE_PIN, LOW);
+	delay(ON_TIME);
+	digitalWrite(CLOSE_PIN, HIGH);
+}
+```
+Now that I had an easy way to control the motor, I needed to connect the board
+to the internet. Eventually, the goal was to have an HTTP request to `<board
+IP>/open` open the blinds, and a call to `/close` close them.
+
+I began with the [ESP8266 WiFi
+Library](https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/readme.html)
+which allows the MCU to connect to my home WiFi:
+```c++
+#include <ESP8266WiFi.h>
+
+const char* ssid = "REDACTED";
+const char* password = "REDACTED";
+
+void setup(void){
+	//...
+	Serial.begin(9600);
+  Serial.println();
+  WiFi.begin(ssid, password);
+
+  // Wait for connection
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println();
+
+  Serial.print("Connected to ");
+  Serial.println(ssid);
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP())
+	//...
+}
+```
+Next we use the ESP8266WebServer Library to serve our endpoints. Since we are
+serving a website anyways, we also add some buttons so that we can control the
+blinds from the web without SmartThings integration. This server is only
+accessible locally.
+```c++
+#include <ESP8266WebServer.h>
+
+// Create server and listen on port 80
+ESP8266WebServer server(80);
+
+void setup(void){
+	//...
+	server.on("/", [](){
+    server.send(200, "text/html", webPage);
+  });
+  server.on("/open", [](){
+    server.send(200, "text/html", webPage);
+		open();
+  });
+  server.on("/close", [](){
+    server.send(200, "text/html", webPage);
+    Serial.println("Closing");
+		close();
+  });
+  server.begin();
+  Serial.println("HTTP server started");
+}
+
+void loop(void){
+  server.handleClient();
+}
+```
+Running after the WiFi connection is established, this code sets up the server
+to serve the simple website, which we define as follows: 
+```html
+<h1>Smart Blinds</h1>
+<p>Blinds #1
+	<a href=\"open\">
+		<button>Open</button>
+	</a>
+	<a href=\"close\">
+		<button>Close</button>
+	</a>
+</p>
+```
+(Note in the code this is concatenated into one long String)
+
+This website is served at the root path `/`. When the user clicks on one of the
+buttons, or otherwise navigates to the `/open` or `/close` endpoints, we send
+that same webpage so they may continue control, and execute the corresponding
+`open()` or `close()` function.
+
+Lastly, we want to be able to access our server without having to know the
+exact IP, so we use multicast DNS (mDNS) via the [ESP8266mDNS
+Library](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266mDNS)
+```c++
+#include <ESP8266mDNS.h>
+MDNSResponder mdns;
+
+void setup(void){
+	if (mdns.begin("SmartBlinds", WiFi.localIP())) {
+		Serial.println("MDNS responder started");
+	}
+}
+```
+This allows us to access our server at `http://SmartBlinds.local` rather than
+needing to know the exact IP.
+
+The full code is available [on my GitHub](https://github.com/linkoep/IoT_Blinds/blob/master/IoT_Blinds.ino).
+
+<a name="smartThingsDeviceHandler"></a>
+### SmartThings Device Handler
+Now that our blinds are fully operational, we just need to integrate them with
+the SmartThings ecosystem.  This is accomplished by writing our own device
+handler, adapted from a [Generic HTTP
+Device](https://github.com/JZ-SmartThings/SmartThings/blob/master/Devices/Generic%20HTTP%20Device/GenericHTTPDevice.groovy).
+Once again, the full code is on GitHub, but I will highlight some of the
+important parts:
+
+We define a UI with a single tile, that has actions `on` and `off`. 
+```groovy
+tiles {
+	standardTile("DeviceTrigger", "device.triggerswitch", width: 3, height: 3, canChangeIcon: true, canChangeBackground: true) {
+		state "triggeroff", label:'CLOSED' , action: "on", icon: "st.Weather.weather4", backgroundColor:"#808080", nextState: "trying"
+		state "triggeron", label: 'OPEN', action: "off", icon: "st.Weather.weather14", backgroundColor: "#ffffff", nextState: "trying"
+		state "trying", label: 'TRYING', action: "", icon: "st.Home.home9", backgroundColor: "#FFAA33"
+	}
+	main "DeviceTrigger"
+}
+```
+These actions call methods which send an event back to the hub to trigger the UI
+change, and then execute the `runCMD` method. 
+```groovy
+def on() {
+	log.debug "Triggered OPEN!"
+		sendEvent(name: "triggerswitch", value: "triggeron", isStateChange: true)
+		state.blinds = "on";
+	runCmd("/open")
+}
+// Similar for off() -> /close
+```
+This method then makes the http request.
+```groovy
+def runCmd(String varCommand) {
+	def result = new physicalgraph.device.HubAction(
+			method: "GET",
+			path: varCommand,
+			headers: [
+				HOST: "$DeviceIP:80"
+			]
+			)
+		log.debug result
+		return result
+}
+```
+Sadly SmartThings does not support mDNS resolution, so we must specify the
+device IP, which may change. However, mDNS makes it easier to retrieve that IP
+from a computer on the network.
