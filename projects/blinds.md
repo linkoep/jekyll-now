@@ -11,6 +11,7 @@ title: Smart-Home Blinds
 1. [Software](#software)
    1. [NodeMCU Firmware](#nodeMcuFirmware)
    1. [SmartThings Device Handler](#smartThingsDeviceHandler)
+1. [Conclusions](#conclusions)
 
 <a name="introduction"></a>
 ## Introduction 
@@ -320,3 +321,26 @@ def runCmd(String varCommand) {
 Sadly SmartThings does not support mDNS resolution, so we must specify the
 device IP, which may change. However, mDNS makes it easier to retrieve that IP
 from a computer on the network.
+
+<a name="conclusions"></a>
+## Conclusions 
+I always love projects that mix software and hardware, and this one covered
+everything from building circuits to designing what is essentially an API. I
+was pleasantly surprised with the amount of developer support and documentation
+for the SmartThings platform, which allowed for easy extensibility, and it
+feels much more legitimate to see the control for the blinds alongside all the
+other controls on my phone.
+
+{% include image-capt.html 
+	url="Blinds/SmartThingsApp.jpg" 
+	alt="The Blinds Control in the Samsung SmartThings App"
+	caption="The blinds control fits right in with store-bought smart devices" 
+%}
+
+My first experience with a WiFi enabled microcontroller was also very pleasant.
+Although I am iffy about setting the html being served as a single string
+constant, the process of setting up a web server and handling different routes
+was made fairly simple by the provided libraries.
+
+All in all, this was a fun home automation project, and I look forward to
+working more with the NodeMCU and the SmartThings platform in the future.
