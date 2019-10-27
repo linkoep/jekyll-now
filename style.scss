@@ -120,6 +120,31 @@ figcaption {
 	text-align: center;
 }
 
+button {
+	display: inline-block;
+	text-align: center;
+	text-decoration: none;
+	margin: 2px 0;
+	border: solid 3px $gray;
+	border-radius: 100px;
+	padding: 0.5em 1em;
+}
+
+button:active {
+	background-color: $darkGray;
+}
+
+button:hover {
+	background-color: $gray;
+	color: $lightGray;
+	transform: translateY(1px);
+}
+
+button:focus {
+	outline: none;
+	border: solid 5px $gray;
+}
+
 // Fixes images in popup boxes from Google Translate
 .gmnoprint img {
   max-width: none;

@@ -7,6 +7,8 @@
     subfolderitems:
       - title: '"DadBot" Twitter Bot'
         url: /projects/dad-bot
+      - title: Startup Generator
+        url: /projects/mynextstartup
   - title: Systems
     subfolderitems:
       - title: Longboard Lights
