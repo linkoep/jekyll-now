@@ -9,6 +9,8 @@
         url: /projects/dad-bot
       - title: Startup Generator
         url: /projects/mynextstartup
+      - title: Bluetooth Service Scraper
+        url: /projects/gatt-scraper
   - title: Systems
     subfolderitems:
       - title: Longboard Lights
