@@ -10,6 +10,9 @@ page](https://www.bluetooth.com/specifications/gatt/). I realized that the
 various services at least had XML entires for the majority of the services.
 Since my goal was a simple table of services and the characteristics they
 offered, I figured I could automate parsing through these files, which I did
-with some quick python. Here is the result, hopefully it's useful to someone.
+with some [quick python](https://github.com/linkoep/gatt_scrape) using
+[requests](https://requests.readthedocs.io/en/master/) to retrieve the pages
+and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/) for parsing
+them. Here is the result, hopefully it's useful to someone.
 
 {% include_relative ble-gatt-svc.md %}
